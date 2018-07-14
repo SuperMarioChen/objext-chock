@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title></title>
+		<style>
+			#box1 div,#box2 div {
+				width: 300px;
+				height:300px;
+				border: 1px solid #000;
+				display: none;
+			}
+			.yellow {
+				background: yellow;
+			}
+			.red {
+				background: red;
+			}
+		</style>
+		<script>
+			
+		</script>
+	</head>
+
+	<body>
+		<div id="box1">
+			<button>世界杯</button>
+			<button>新闻</button>
+			<button>体育</button>
+			<div>
+				世界杯
+			</div>
+			<div>
+				新闻
+			</div>
+			<div>
+				体育
+			</div>
+		</div>
+		<div id="box2">
+			<button>世界杯</button>
+			<button>新闻</button>
+			<button>体育</button>
+			<div>
+				世界杯
+			</div>
+			<div>
+				新闻
+			</div>
+			<div>
+				体育
+			</div>
+		</div>
+		<button id="btn1">让第一个自动切换</button>
+		<button id="btn2">让第2停止自动切换</button>
+		<button id="btn3">停止的播放，播放的停止</button>
+		<script>
+
+			function Tab(id,initIndex){
+				// var 声明的变量，是局部变量，只能在所声明的函数内部使用
+				this.box = document.querySelector(id);
+				this.buttons = this.box.querySelectorAll('button')		
+				this.divs = this.box.querySelectorAll('div')
+
+				this.len = this.buttons.length;
+
+				
+				this.initIndex = initIndex ? initIndex : 0;  // 初始的下标对用的button加上class	
+
+				this.n = 0;  // 在自动播放时候，记录播放到的button
+
+				this.buttons[this.initIndex].classList.add('yellow')	
+				this.divs[this.initIndex].style.display = 'block';
+
+				this.n = this.initIndex;  //要和初始所在位置保持同步
+
+				this.init(); // 初始化
+			}
+
+			Tab.prototype.init = function (n){
+				console.log(this)
+				// this => 调用这个函数的对象
+				var that = this; // 把init中的this存一份
+				for( var i = 0; i < this.len; i++ ){
+					this.buttons[i].index = i;
+					this.buttons[i].onclick = function (){
+						// this => 点击的button
+						console.log(that);
+						that.change(this.index)	//
+								
+					}
+				}
+			}
+
+			Tab.prototype.change = function (k){
+				for( var j = 0; j < this.len; j++ ){
+					this.buttons[j].classList.remove('yellow')			
+					this.divs[j].style.display = 'none';			
+				}	
+
+				this.buttons[k].classList.add('yellow');
+				this.divs[k].style.display = 'block';	
+			}
+
+			Tab.prototype.play = function (){
+				var that = this;
+				this.timer = setInterval(function (){
+					that.n++;
+					if(that.n > that.len -1) {
+						that.n = 0;
+					}
+					that.change(that.n)
+				},1000)
+			}
+
+			Tab.prototype.isPlay = function (){
+				return !!this.timer	
+			}
+			Tab.prototype.stop = function (){
+				clearInterval(this.timer)
+				this.timer = null;
+			}
+
+			var tab1 = new Tab('#box1',2);
+
+			var tab2 = new Tab('#box2',1);
+
+
+
+		</script>
+	</body>
+</html>
